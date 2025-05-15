@@ -50,4 +50,4 @@ Fichier CI : .github/workflows/dbt.yml
 
 
 
-![image](https://github.com/user-attachments/assets/a5edc1eb-3776-4a8c-8cc4-01e2ea262f41)
+
