@@ -1,0 +1,53 @@
+name: dbt pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: amina
+          POSTGRES_PASSWORD: amina
+          POSTGRES_DB: sales_db
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          pip install dbt-core dbt-postgres pandas sqlalchemy psycopg2-binary
+
+      - name: Wait for Postgres to be ready
+        run: sleep 10
+
+      - name: Load CSV into Postgres
+        run: python scripts/load_sales.py
+
+      - name: Run dbt
+        run: |
+          dbt deps
+          dbt debug
+          dbt run
+          dbt test
+        env:
+          DBT_PROFILES_DIR: .
