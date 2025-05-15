@@ -1,0 +1,17 @@
+name: 'sales_pipeline'
+version: '1.0'
+config-version: 2
+
+profile: 'sales_pipeline'
+
+model-paths: ["models"]
+
+models:
+  sales_pipeline:
+    +materialized: view
+
+    marts:
+      +materialized: view
+
+    staging:
+      +materialized: view
